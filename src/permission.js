@@ -11,20 +11,26 @@ const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  console.log(getToken())
+
   if (getToken()) {
     /* has token*/
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
     } else {
-      if (store.getters.roles.length === 0) {
+      if (store.getters.name === '') {
         // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetInfo').then(res => {
+        store.dispatch('GetLoggedInfo').then(res => {
           // 拉取user_info
           const roles = res.roles
+
+          console.log(res)
+
           store.dispatch('GenerateRoutes', { roles }).then(accessRoutes => {
-          // 测试 默认静态页面
-          // store.dispatch('permission/generateRoutes', { roles }).then(accessRoutes => {
+            console.log('dynamic routes following:', JSON.parse(JSON.stringify(accessRoutes)))
+            // 测试 默认静态页面
+            // store.dispatch('permission/generateRoutes', { roles }).then(accessRoutes => {
             // 根据roles权限生成可访问的路由表
             router.addRoutes(accessRoutes) // 动态添加可访问路由表
             next({ ...to, replace: true }) // hack方法 确保addRoutes已完成

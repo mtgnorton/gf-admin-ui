@@ -117,11 +117,13 @@ export function handleTree(data, id, parentId, children, rootId) {
 		return []
 	}
 	id = id || 'id'
-	parentId = parentId || 'parentId'
+	parentId = parentId || 'parent_id'
 	children = children || 'children'
 	rootId = rootId || 0
 	//对源数据深度克隆
 	const cloneData = JSON.parse(JSON.stringify(data))
+  console.log(cloneData);
+
 	//循环所有项
 	const treeData =  cloneData.filter(father => {
 	  let branchArr = cloneData.filter(child => {
@@ -134,4 +136,3 @@ export function handleTree(data, id, parentId, children, rootId) {
 	});
 	return treeData != '' ? treeData : data;
   }
-  

@@ -11,6 +11,7 @@ const service = axios.create({
   // 超时
   timeout: 50000
 })
+
 // request拦截器
 service.interceptors.request.use(
   config => {
@@ -26,6 +27,7 @@ service.interceptors.request.use(
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+
     const code = res.data.code
     if (code === 401) {
       MessageBox.confirm(
@@ -43,9 +45,9 @@ service.interceptors.response.use(res => {
       })
     } else if (code !== 0) {
       Notification.error({
-        title: res.data.msg
+        title: res.data.message
       })
-      return Promise.reject('error')
+      return Promise.reject(res.data)
     } else {
       // 如果新token存在 则刷新token
       res.headers.nt?setToken(res.headers.nt):""
@@ -53,6 +55,7 @@ service.interceptors.response.use(res => {
     }
   },
   error => {
+
     console.log('err' + error)
     Message({
       message: error.message,

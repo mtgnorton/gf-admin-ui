@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, getLoggedInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -31,17 +31,25 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
+      console.log(userInfo)
+
       const username = userInfo.username.trim()
       const password = userInfo.password
       const code = userInfo.code
-      const idkey = userInfo.idkey
+      const captcha_id = userInfo.captcha_id
       return new Promise((resolve, reject) => {
-        login(username, password, code, idkey).then(res => {
+        login(username, password,code,captcha_id).then(res => {
+
+          console.log(res)
+
           if (res.code != 0) {
+
+            console.log(3333)
+
             reject(res)
-          }else{
-            setToken(res.data.token)
-            commit('SET_TOKEN', res.token)
+          } else {
+            setToken(res.data.Token)
+            commit('SET_TOKEN', res.Token)
           }
           resolve()
         }).catch(error => {
@@ -51,18 +59,20 @@ const user = {
     },
 
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    GetLoggedInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(res => {
-          const user = res.data.user
-          const avatar = user.avatar == "" ? require("@/assets/image/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
-          if (res.data.roles && res.data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', res.data.roles)
-            commit('SET_PERMISSIONS', res.data.permissions)
+        getLoggedInfo(state.token).then(res => {
+          console.log(res, 33333)
+
+          const user = res.data
+          const avatar = user.avatar == '' ? require('@/assets/image/profile.jpg') : user.avatar
+          if (user.roles && user.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_ROLES', user.roles)
+            commit('SET_PERMISSIONS', user.menus)
           } else {
-            commit('SET_ROLES', ['ROLE_DEFAULT'])
+            commit('SET_ROLES', [])
           }
-          commit('SET_NAME', user.user_name)
+          commit('SET_NAME', user.username)
           commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
@@ -70,7 +80,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

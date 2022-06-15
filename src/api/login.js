@@ -1,13 +1,14 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(username, password, validateCode, idkey) {
+export function login(username, password, code, captcha_id) {
   const data = {
     username,
     password,
-    validateCode,
-    idkey
+    code,
+    captcha_id
   }
+
   return request({
     url: '/login',
     method: 'post',
@@ -15,10 +16,18 @@ export function login(username, password, validateCode, idkey) {
   })
 }
 
-// 获取用户详细信息
-export function getInfo() {
+export function loginInfo() {
   return request({
-    url: '/getInfo',
+    url: '/login-info',
+    method: 'get',
+    data: {}
+  })
+}
+
+// 获取用户详细信息
+export function getLoggedInfo() {
+  return request({
+    url: '/administrator-get-logged-info',
     method: 'get'
   })
 }
@@ -34,7 +43,7 @@ export function logout() {
 // 获取验证码
 export function getCodeImg() {
   return request({
-    url: '/captchaImage',
+    url: '/captcha-get',
     method: 'get'
   })
 }
