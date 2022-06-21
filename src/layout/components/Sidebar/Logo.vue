@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      title: 'GEA管理系统',
+      title: 'gf-admin管理系统',
       logo: logoImg
     }
   }

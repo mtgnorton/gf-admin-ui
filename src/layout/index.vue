@@ -53,7 +53,7 @@ export default {
   },
   created() {
 
-    ws.url = 'ws://localhost:8200/admin/api/ws?token=' + getToken()
+    ws.url = 'ws://' + window.location.host + '/admin-api/ws?token=' + getToken()
     let that = this
     ws.receive = function(result) {
 

@@ -1,7 +1,7 @@
 {
   "name": "ruoyi",
   "version": "2.2.0",
-  "description": "GEA管理系统",
+  "description": "gf-admin管理系统",
   "author": "1307",
   "license": "MIT",
   "scripts": {

@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'GEA管理系统',
+  title: 'gea管理系统',
 
   /**
    * 是否系统布局配置
