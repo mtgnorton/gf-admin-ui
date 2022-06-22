@@ -14,10 +14,37 @@ export function listCollect(query) {
   })
 }
 
+// 更新归集列表
+export function updateCollect(query) {
+  return request({
+    url: '/binance-collect-update', method: 'put', params: query
+  })
+}
+
+// 删除归集列表
+export function destroyCollect(query) {
+  return request({
+    url: '/binance-collect-destroy', method: 'delete', params: query
+  })
+}
+
 // 查询提现列表
 export function listWithdraw(query) {
   return request({
     url: '/binance-withdraw-list', method: 'get', params: query
+  })
+}
+
+// 更新提现列表
+export function updateWithdraw(query) {
+  return request({
+    url: '/binance-withdraw-update', method: 'put', params: query
+  })
+}
+
+export function destroyWithdraw(query) {
+  return request({
+    url: '/binance-withdraw-destroy', method: 'delete', params: query
   })
 }
 
@@ -28,10 +55,34 @@ export function listQueueTask(query) {
   })
 }
 
+export function updateQueueTask(query) {
+  return request({
+    url: '/binance-queue-task-update', method: 'put', params: query
+  })
+}
+
+export function destroyQueueTask(query) {
+  return request({
+    url: '/binance-queue-task-destroy', method: 'delete', params: query
+  })
+}
+
 // 查询通知列表
 export function listNotify(query) {
   return request({
     url: '/binance-notify-list', method: 'get', params: query
+  })
+}
+
+export function updateNotify(query) {
+  return request({
+    url: '/binance-notify-update', method: 'put', params: query
+  })
+}
+
+export function destroyNotify(query) {
+  return request({
+    url: '/binance-notify-destroy', method: 'delete', params: query
   })
 }
 

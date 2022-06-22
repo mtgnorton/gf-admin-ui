@@ -99,7 +99,31 @@
 
           <el-table-column label="创建时间" align="center" prop="create_at"/>
           <el-table-column label="更新时间" align="center" prop="update_at"/>
+          <el-table-column
+            label="操作"
+            align="center"
+            width="180"
+            class-name="small-padding fixed-width"
+          >
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="handleUpdate(scope.row)"
+              >修改
+              </el-button>
+              <el-button
+                v-if="scope.row.userId !== 1"
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
+              >删除
+              </el-button>
 
+            </template>
+          </el-table-column>
 
         </el-table>
 
@@ -112,16 +136,45 @@
         />
       </el-col>
     </el-row>
+
+
+    <!-- 添加或修改参数配置对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-row>
+
+          <el-form-item label="状态" prop="status">
+            <el-select v-model="form.status" placeholder="请选择">
+              <el-option key="wait_fee" value="wait_fee" label="待转手续费"></el-option>
+              <el-option key="process_fee" value="process_fee" label="转出手续费中"></el-option>
+              <el-option key="wait_collect" value="wait_collect" label="待归集"></el-option>
+              <el-option key="process_collect" value="process_collect" label="归集中"></el-option>
+              <el-option key="wait_notify" value="wait_notify" label="待通知"></el-option>
+              <el-option key="process_notify" value="process_notify" label="完成"></el-option>
+              <el-option key="fail_to_low_amount" value="fail_to_low_amount" label="充值金额过少"></el-option>
+              <el-option key="fail" value="fail" label="失败"></el-option>
+            </el-select>
+          </el-form-item>
+
+
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click.prevent="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 <script>
 
 import {
-  listCollect
+  listCollect, updateCollect, destroyCollect
 } from '@/api/binance'
 
 export default {
-  name: 'useraddress',
+  name: 'collect',
   data() {
     return {
       loading: true,
@@ -136,7 +189,13 @@ export default {
         collect_hash: '',
         user_address: '',
         status: ''
-      }
+      },
+      form: {
+        id: undefined,
+        status: undefined
+      },
+      title: '',
+      open: false
     }
   },
 
@@ -153,6 +212,52 @@ export default {
           this.loading = false
         }
       )
+    },
+    /** 提交按钮 */
+    submitForm: function() {
+
+      var that = this
+
+      updateCollect(this.form).then(response => {
+        if (response.code === 0) {
+          this.msgSuccess('修改成功')
+          this.open = false
+          this.getList()
+        } else {
+          this.msgError(response.msg)
+        }
+      }).catch(() => {
+      })
+
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.form.status = row.status
+      this.form.id = row.id
+      this.resetForm('form')
+      this.open = true
+      this.title = '修改合约'
+
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+
+      this.$confirm('是否确认删除用户编号为"' + row.id + '"的数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(function() {
+        return destroyCollect({ 'id': row.id })
+      }).then(() => {
+        this.getList()
+        this.msgSuccess('删除成功')
+      }).catch(function() {
+      })
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
